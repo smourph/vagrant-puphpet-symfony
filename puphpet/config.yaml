@@ -55,8 +55,11 @@ vagrantfile:
                         - '--archive'
                         - '-z'
                     exclude:
+                        - .idea/
                         - .vagrant/
                         - .git/
+                        - .gitignore
+                        - .gitkeep
                     auto: 'true'
                 owner: www-data
                 group: www-data
