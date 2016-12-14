@@ -3,8 +3,8 @@ vagrantfile:
     vm:
         provider:
             local:
-                box: puphpet/ubuntu1404-x64
-                box_url: puphpet/ubuntu1404-x64
+                box: puphpet/ubuntu1604-x64
+                box_url: puphpet/ubuntu1604-x64
                 box_version: '0'
                 chosen_virtualizer: virtualbox
                 virtualizers:
@@ -15,33 +15,35 @@ vagrantfile:
                     vmware:
                         numvcpus: 1
                     parallels:
-                        use_linked_clone: 0
+                        linked_clone: 0
                         check_guest_tools: 0
                         update_guest_tools: 0
                 machines:
-                    vflm_9mo8h67bjbag:
-                        id: vm
-                        hostname: vm.puppet
+                    vflm_olp0m5ysywcp:
+                        id: machine1
+                        hostname: machine1.puphpet
                         network:
-                            private_network: 192.168.50.50
+                            private_network: 192.168.56.101
                             forwarded_port:
-                                vflmnfp_timt2va2lllz:
-                                    host: '2200'
+                                vflmnfp_zi0z5phrrq1i:
+                                    host: '5331'
                                     guest: '22'
-                        memory: '1024'
-                        cpus: '2'
+                        memory: '512'
+                        cpus: '1'
         provision:
             puppet:
                 manifests_path: puphpet/puppet/manifests
-                module_path: puphpet/puppet/modules
+                module_path:
+                    - puphpet/puppet/modules
+                    - puphpet/puppet/manifests
                 options:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
         synced_folder:
-            vflsf_izua5tmyrped:
-                source: ../website
-                target: /var/www/website
-                sync_type: nfs
+            vflsf_eaxlft0h0gn6:
+                source: ./
+                target: /var/www
+                sync_type: default
                 smb:
                     smb_host: ''
                     smb_username: ''
@@ -55,11 +57,8 @@ vagrantfile:
                         - '--archive'
                         - '-z'
                     exclude:
-                        - .idea/
                         - .vagrant/
                         - .git/
-                        - .gitignore
-                        - .gitkeep
                     auto: 'true'
                 owner: www-data
                 group: www-data
@@ -87,9 +86,7 @@ vagrantfile:
         no_proxy: ''
 server:
     install: '1'
-    packages:
-        - htop
-        - vim
+    packages: {  }
 users_groups:
     install: '1'
     groups: {  }
@@ -101,7 +98,7 @@ locale:
         locales:
             - en_GB.UTF-8
             - en_US.UTF-8
-        timezone: Europe/Paris
+        timezone: UTC
 firewall:
     install: '1'
     rules: {  }
@@ -111,28 +108,22 @@ cron:
 nginx:
     install: '1'
     settings:
-        default_vhost: 0
-        proxy_buffer_size: 128k
+        version: present
+        default_vhost: 1
         proxy_buffers: '4 256k'
+        proxy_buffer_size: 128k
         proxy_connect_timeout: 600s
         proxy_send_timeout: 600s
         proxy_read_timeout: 600s
         names_hash_bucket_size: 128
-    upstreams:
-        nxv_ci3s83oyzwpe:
-            name: phpfcgi
-            upstream_fail_timeout: 10s
-            members:
-                - '127.0.0.1:9000'
+    upstreams: {  }
     vhosts:
         website:
-            server_name: website.dev
-            www_root: /var/www/website
+            server_name: awesome.dev
+            server_aliases:
+                - www.awesome.dev
+            www_root: /var/www/awesome
             listen_port: '80'
-            index_files:
-                - index.html
-                - index.htm
-                - index.php
             client_max_body_size: 1m
             ssl: '0'
             ssl_cert: ''
@@ -143,8 +134,13 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_t6mdfreozbxs:
+                nxvl_1sw61u82herg:
+                    www_root: ''
                     location: /
+                    index_files:
+                        - index.html
+                        - index.htm
+                        - index.php
                     try_files:
                         - $uri
                         - $uri/
@@ -154,13 +150,14 @@ nginx:
                     fastcgi_split_path: ''
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_1zkuoggf353l:
+                nxvl_uuf6qk5kf88q:
+                    www_root: ''
                     location: '~ \.php$'
                     try_files:
                         - $uri
                         - $uri/
                         - /index.php$is_args$args
-                    fastcgi: phpfcgi
+                    fastcgi: '127.0.0.1:9000'
                     fastcgi_index: index.php
                     fastcgi_split_path: '^(.+\.php)(/.*)$'
                     fast_cgi_params_extra:
@@ -185,11 +182,11 @@ apache:
         - proxy_fcgi
         - rewrite
     vhosts:
-        av_f98r6vihptsh:
-            servername: website.dev
+        av_off90ombgyt8:
+            servername: awesome.dev
             serveraliases:
-                - website.dev
-            docroot: /var/www/website
+                - www.awesome.dev
+            docroot: /var/www/awesome
             port: '80'
             setenv:
                 - 'APP_ENV dev'
@@ -204,8 +201,8 @@ apache:
             ssl_protocol: ''
             ssl_cipher: ''
             directories:
-                avd_ii4jked6dqtr:
-                    path: /var/www/website
+                avd_yrkm4mqe4e6o:
+                    path: /var/www/awesome
                     options:
                         - Indexes
                         - FollowSymlinks
@@ -216,50 +213,37 @@ apache:
                         - 'all granted'
                     custom_fragment: ''
                     files_match:
-                        avdfm_t0gssu6oeawb:
+                        avdfm_qnuizzr03ghb:
                             path: \.php$
                             sethandler: 'proxy:fcgi://127.0.0.1:9000'
                             custom_fragment: ''
                             provider: filesmatch
                     provider: directory
 letsencrypt:
-    install: '0'
+    install: '1'
     settings:
         email: ''
     domains: {  }
 php:
     install: '1'
     settings:
-        version: '70'
+        version: '7.1'
     modules:
         php:
             - cli
             - intl
-            - fpm
-            - common
-            - readline
-            - curl
-            - imap
-            - gd
-            - mbstring
-            - memcached
-            - mysql
+            - xml
         pear: {  }
         pecl: {  }
     ini:
         display_errors: 'On'
         error_reporting: '-1'
         session.save_path: /var/lib/php/session
-        date.timezone: Europe/Paris
-        short_open_tag: 'off'
-        magic_quotes_gpc: 'off'
-        register_global: 'off'
-        register_globals: 'off'
-        session.auto_start: 'off'
+        date.timezone: UTC
     fpm_ini:
         error_log: /var/log/php-fpm.log
     fpm_pools:
-        phpfp_73t4iar7b2jr:
+        phpfp_ghy8ecyqqyeh:
             ini:
                 prefix: www
                 listen: '127.0.0.1:9000'
@@ -269,7 +253,7 @@ php:
     composer: '1'
     composer_home: ''
 xdebug:
-    install: '1'
+    install: '0'
     settings:
         xdebug.default_enable: '1'
         xdebug.remote_autostart: '0'
@@ -295,36 +279,32 @@ xhprof:
     install: '0'
 wpcli:
     install: '0'
-    version: v0.21.1
+    version: v0.24.1
 drush:
     install: '0'
     version: 8.0.5
 ruby:
     install: '1'
     versions:
-        rv_z5k2av0nhldo:
+        rv_zs97a2tn00jh:
             default: '1'
             bundler: '1'
-            version: 1.9.3
+            version: 2.3.1
             gems:
-                - deep_merge
-                - activesupport
-                - vine
+                - deep_merge@1.0.1
+                - activesupport@4.2.6
+                - vine@0.2
 python:
     install: '1'
     packages: {  }
     versions: {  }
 nodejs:
-    install: '1'
+    install: '0'
     settings:
-        version: '5'
-    npm_packages:
-        - grunt-cli
-        - grunt
-        - bower
+        version: '6'
+    npm_packages: {  }
 hhvm:
     install: '0'
-    nightly: 0
     composer: '1'
     composer_home: ''
     settings: {  }
@@ -336,47 +316,47 @@ hhvm:
     php_ini:
         display_errors: 'On'
         error_reporting: '-1'
-        date.timezone: Europe/Paris
+        date.timezone: UTC
 mariadb:
     install: '1'
     settings:
         version: '10.1'
-        root_password: 'root'
+        root_password: '123'
         override_options: {  }
-    adminer: '0'
+    adminer: 0
     users:
-        mariadbnu_r1zay66y1ym9:
-            name: website
-            password: website
+        mariadbnu_42qk053ero9u:
+            name: dbuser
+            password: '123'
     databases:
-        mariadbnd_0vgnfxkl45aq:
-            name: symfony
+        mariadbnd_mvf5lpc4ce39:
+            name: dbname
             sql: ''
     grants:
-        mariadbng_nq1my1i1cpfm:
-            user: website
-            table: 'symfony.*'
+        mariadbng_nea0e0z4ghis:
+            user: dbuser
+            table: '*.*'
             privileges:
                 - ALL
 mysql:
     install: '0'
     settings:
-        version: '5.6'
+        version: '5.7'
         root_password: '123'
         override_options: {  }
     adminer: 0
     users:
-        mysqlnu_jrkpm9ch9zwb:
-            name: website
-            password: 'website'
+        mysqlnu_nyr1nzbkepfh:
+            name: dbuser
+            password: '123'
     databases:
-        mysqlnd_sve8g3az58ca:
-            name: symfony
+        mysqlnd_rs7w7hg5sdl2:
+            name: dbname
             sql: ''
     grants:
-        mysqlng_q9l03tnxp5oo:
-            user: website
-            table: 'symfony.*'
+        mysqlng_j13ty2rqpfg2:
+            user: dbuser
+            table: '*.*'
             privileges:
                 - ALL
 postgresql:
@@ -384,7 +364,7 @@ postgresql:
     settings:
         global:
             encoding: UTF8
-            version: '9.4'
+            version: '9.6'
         server:
             postgres_password: '123'
     databases: {  }
@@ -408,7 +388,7 @@ sqlite:
     adminer: 0
     databases: {  }
 mailhog:
-    install: '1'
+    install: '0'
     settings:
         smtp_ip: 0.0.0.0
         smtp_port: 1025
@@ -439,11 +419,11 @@ elastic_search:
         version: 2.3.1
         java_install: true
     instances:
-        esi_7huszy5gn9xf:
+        esi_pmn23prxanqp:
             name: es-01
 solr:
     install: '0'
     settings:
-        version: 4.10.2
+        version: 5.5.2
         port: '8984'
 

@@ -1,43 +1,38 @@
 vagrantfile:
-    target: local
     vm:
         provider:
             local:
                 machines:
-                    vflm_9mo8h67bjbag:
+                    vflm_olp0m5ysywcp:
                         id: mes-elus-front1
                         hostname: mes-elus.puppet
                         network:
                             private_network: 192.168.50.50
                             forwarded_port:
-                                vflmnfp_timt2va2lllz:
-                                    host: '2201'
+                                vflmnfp_zi0z5phrrq1i:
+                                    host: '2200'
                                     guest: '22'
                         memory: '1024'
                         cpus: '2'
         synced_folder:
-            vflsf_ka0jqanjm0q7:
+            vflsf_eaxlft0h0gn6:
                 source: ../api
                 target: /var/www/api
                 sync_type: nfs
-                smb:
-                    smb_host: ''
-                    smb_username: ''
-                    smb_password: ''
-                    mount_options:
-                        dir_mode: '0775'
-                        file_mode: '0664'
                 rsync:
-                    args:
-                        - '--verbose'
-                        - '--archive'
-                        - '-z'
                     exclude:
+                        - .idea/
                         - .vagrant/
                         - .git/
-                    auto: 'true'
-                owner: www-data
-                group: www-data
+                        - .gitignore
+                        - .gitkeep
+server:
+    packages:
+        - htop
+        - vim
+locale:
+    settings:
+        timezone: Europe/Paris
 cron:
     jobs:
         cj_8w1kav4dbthm:
@@ -50,15 +45,27 @@ cron:
             month: ''
             monthday: ''
 nginx:
+    settings:
+        default_vhost: 0
+    upstreams:
+        nxv_ci3s83oyzwpe:
+            name: phpfcgi
+            upstream_fail_timeout: 10s
+            members:
+                - '127.0.0.1:9000'
     vhosts:
         website:
             server_name: mes-elus.local
+            server_aliases: mes-elus.local
+            www_root: /var/www/website
+            locations:
+                nxvl_uuf6qk5kf88q:
+                    fastcgi: phpfcgi
         api:
             server_name: api.mes-elus.local
+            server_aliases: api.mes-elus.local
             www_root: /var/www/api/web
             listen_port: '80'
-            index_files:
-              - app.php
             client_max_body_size: 1m
             ssl: '0'
             ssl_cert: ''
@@ -69,8 +76,11 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_3jnuf61uu1sp:
+                nxvl_ocb82xstby3j:
+                    www_root: ''
                     location: /
+                    index_files:
+                        - app.php
                     try_files:
                         - $uri
                         - /app.php$is_args$args
@@ -82,7 +92,8 @@ nginx:
                 ##############################
                 # Only for dev environnement #
                 ##############################
-                nxvl_bdnn375b2hr1:
+                nxvl_kiqvoidsutyc:
+                    www_root: ''
                     location: '~ ^/(app_dev|config)\.php(/|$)'
                     fastcgi: phpfcgi
                     fastcgi_index: ''
@@ -92,6 +103,8 @@ nginx:
                         - 'DOCUMENT_ROOT $realpath_root'
                         - 'APP_ENV dev'
                         - 'APP_DEBUG true'
+                    set:
+                        - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
                 ##############################
@@ -104,13 +117,14 @@ nginx:
                     fast_cgi_params_extra:
                         - 'SCRIPT_FILENAME $realpath_root$fastcgi_script_name'
                         - 'DOCUMENT_ROOT $realpath_root'
+                    set:
+                        - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
     proxies: {  }
+letsencrypt:
+    install: '0'
 php:
-    install: '1'
-    settings:
-        version: '70'
     modules:
         php:
             - cli
@@ -124,206 +138,40 @@ php:
             - mbstring
             - memcached
             - mysql
-        pear: {  }
-        pecl: {  }
+            - xml
     ini:
-        display_errors: 'On'
-        error_reporting: '-1'
-        session.save_path: /var/lib/php/session
         date.timezone: Europe/Paris
         short_open_tag: 'off'
         magic_quotes_gpc: 'off'
         register_global: 'off'
         register_globals: 'off'
         session.auto_start: 'off'
-    fpm_ini:
-        error_log: /var/log/php-fpm.log
-    fpm_pools:
-        phpfp_73t4iar7b2jr:
-            ini:
-                prefix: www
-                listen: '127.0.0.1:9000'
-                security.limit_extensions: .php
-                user: www-user
-                group: www-data
-    composer: '1'
-    composer_home: ''
 xdebug:
     install: '1'
-    settings:
-        xdebug.default_enable: '1'
-        xdebug.remote_autostart: '0'
-        xdebug.remote_connect_back: '1'
-        xdebug.remote_enable: '1'
-        xdebug.remote_handler: dbgp
-        xdebug.remote_port: '9000'
-blackfire:
-    install: '0'
-    settings:
-        server_id: ''
-        server_token: ''
-        agent:
-            http_proxy: ''
-            https_proxy: ''
-            log_file: stderr
-            log_level: '1'
-        php:
-            agent_timeout: '0.25'
-            log_file: ''
-            log_level: '1'
-xhprof:
-    install: '0'
-wpcli:
-    install: '0'
-    version: v0.21.1
-drush:
-    install: '0'
-    version: 8.0.5
-ruby:
-    install: '1'
-    versions:
-        rv_z5k2av0nhldo:
-            default: '1'
-            bundler: '1'
-            version: 1.9.3
-            gems:
-                - deep_merge
-                - activesupport
-                - vine
-python:
-    install: '1'
-    packages: {  }
-    versions: {  }
 nodejs:
     install: '1'
-    settings:
-        version: '5'
     npm_packages:
         - grunt-cli
         - grunt
         - bower
-hhvm:
-    install: '0'
-    nightly: 0
-    composer: '1'
-    composer_home: ''
-    settings: {  }
-    server_ini:
-        hhvm.server.host: 127.0.0.1
-        hhvm.server.port: '9000'
-        hhvm.log.use_log_file: '1'
-        hhvm.log.file: /var/log/hhvm/error.log
-    php_ini:
-        display_errors: 'On'
-        error_reporting: '-1'
-        date.timezone: Europe/Paris
 mariadb:
-    install: '1'
     settings:
-        version: '10.1'
-        root_password: '123'
-        override_options: {  }
-    adminer: '0'
+        root_password: 'root'
     users:
-        mariadbnu_r1zay66y1ym9:
-            name: symfony
-            password: symfony
+        mariadbnu_42qk053ero9u:
+            name: dev
+            password: 'dev'
     databases:
-        mariadbnd_0vgnfxkl45aq:
-            name: meselus
-            sql: ''
-    grants:
-        mariadbng_nq1my1i1cpfm:
-            user: symfony
-            table: 'meselus.*'
-            privileges:
-                - ALL
-mysql:
-    install: '0'
-    settings:
-        version: '5.6'
-        root_password: '123'
-        override_options: {  }
-    adminer: 0
-    users:
-        mysqlnu_jrkpm9ch9zwb:
+        mariadbnd_mvf5lpc4ce39:
             name: symfony
-            password: 'symfony'
-    databases:
-        mysqlnd_sve8g3az58ca:
-            name: meselus
-            sql: ''
     grants:
-        mysqlng_q9l03tnxp5oo:
-            user: symfony
-            table: 'meselus.*'
-            privileges:
-                - ALL
-postgresql:
-    install: '0'
-    settings:
-        global:
-            encoding: UTF8
-            version: '9.4'
-        server:
-            postgres_password: '123'
-    databases: {  }
-    users: {  }
-    grants: {  }
-    adminer: 0
-mongodb:
-    install: '0'
-    settings:
-        bind_ip: 127.0.0.1
-        port: '27017'
-    globals:
-        version: 2.6.0
-    databases: {  }
-redis:
-    install: '0'
-    settings:
-        port: '6379'
-sqlite:
-    install: '0'
-    adminer: 0
-    databases: {  }
+        mariadbng_nea0e0z4ghis:
+            user: dev
+            table: 'symfony.*'
 mailhog:
     install: '1'
-    settings:
-        smtp_ip: 0.0.0.0
-        smtp_port: 1025
-        http_ip: 0.0.0.0
-        http_port: '8025'
-        path: /usr/local/bin/mailhog
-beanstalkd:
-    install: '0'
-    settings:
-        listenaddress: 0.0.0.0
-        listenport: '11300'
-        maxjobsize: '65535'
-        maxconnections: '1024'
-        binlogdir: /var/lib/beanstalkd/binlog
-        binlogfsync: null
-        binlogsize: '10485760'
-    beanstalk_console: 0
-rabbitmq:
-    install: '0'
-    settings:
-        port: '5672'
-    users: {  }
-    vhosts: {  }
-    plugins: {  }
 elastic_search:
-    install: '0'
-    settings:
-        version: 2.3.1
-        java_install: true
+    install: '1'
     instances:
-        esi_7huszy5gn9xf:
-            name: es-01
-solr:
-    install: '0'
-    settings:
-        version: 4.10.2
-        port: '8984'
-
+        esi_pmn23prxanqp:
+            name: elk
