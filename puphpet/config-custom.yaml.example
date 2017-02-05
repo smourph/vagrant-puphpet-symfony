@@ -4,28 +4,25 @@ vagrantfile:
             local:
                 machines:
                     vflm_olp0m5ysywcp:
-                        id: mes-elus-front1
-                        hostname: mes-elus.puppet
+                        id: website-front
+                        hostname: website.puppet
                         network:
-                            private_network: 192.168.50.50
+                            private_network: 192.168.X.X
                             forwarded_port:
                                 vflmnfp_zi0z5phrrq1i:
-                                    host: '2200'
-                                    guest: '22'
+                                    host: 'XXXX'
                         memory: '1024'
                         cpus: '2'
         synced_folder:
             vflsf_eaxlft0h0gn6:
-                source: ../api
-                target: /var/www/api
+                source: ../website
+                target: /var/www/website
                 sync_type: nfs
                 rsync:
                     exclude:
                         - .idea/
                         - .vagrant/
                         - .git/
-                        - .gitignore
-                        - .gitkeep
 server:
     packages:
         - htop
@@ -33,17 +30,6 @@ server:
 locale:
     settings:
         timezone: Europe/Paris
-cron:
-    jobs:
-        cj_8w1kav4dbthm:
-            name: 'Data import for API'
-            user: vagrant
-            command: 'bash /vagrant/scripts/import_api_data.sh'
-            minute: ''
-            hour: '4'
-            weekday: ''
-            month: ''
-            monthday: ''
 nginx:
     settings:
         default_vhost: 0
@@ -55,73 +41,30 @@ nginx:
                 - '127.0.0.1:9000'
     vhosts:
         website:
-            server_name: mes-elus.local
-            server_aliases: mes-elus.local
+            server_name: website.local
+            server_aliases:
+                - www.website.local
             www_root: /var/www/website
             locations:
-                nxvl_uuf6qk5kf88q:
+                general:
+                    www_root: /var/www/website/web
+                dev:
+                    www_root: /var/www/website/web
                     fastcgi: phpfcgi
-        api:
-            server_name: api.mes-elus.local
-            server_aliases: api.mes-elus.local
-            www_root: /var/www/api/web
-            listen_port: '80'
-            client_max_body_size: 1m
-            ssl: '0'
-            ssl_cert: ''
-            ssl_key: ''
-            ssl_port: '443'
-            ssl_protocols: ''
-            ssl_ciphers: ''
-            rewrite_to_https: '1'
-            spdy: '1'
-            locations:
-                nxvl_ocb82xstby3j:
-                    www_root: ''
-                    location: /
-                    index_files:
-                        - app.php
-                    try_files:
-                        - $uri
-                        - /app.php$is_args$args
-                    fastcgi: ''
-                    fastcgi_index: ''
-                    fastcgi_split_path: ''
-                    proxy: ''
-                    proxy_redirect: ''
-                ##############################
-                # Only for dev environnement #
-                ##############################
-                nxvl_kiqvoidsutyc:
-                    www_root: ''
-                    location: '~ ^/(app_dev|config)\.php(/|$)'
-                    fastcgi: phpfcgi
-                    fastcgi_index: ''
-                    fastcgi_split_path: '^(.+\.php)(/.*)$'
                     fast_cgi_params_extra:
-                        - 'SCRIPT_FILENAME $realpath_root$fastcgi_script_name'
-                        - 'DOCUMENT_ROOT $realpath_root'
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
                         - 'APP_ENV dev'
                         - 'APP_DEBUG true'
-                    set:
-                        - '$path_info $fastcgi_path_info'
-                    proxy: ''
-                    proxy_redirect: ''
-                ##############################
-                ##############################
-                nxvl_rzw8qrvpth8a:
-                    location: '~ ^/app\.php(/|$)'
+                prod:
+                    www_root: /var/www/website/web
                     fastcgi: phpfcgi
-                    fastcgi_index: ''
-                    fastcgi_split_path: '^(.+\.php)(/.*)$'
                     fast_cgi_params_extra:
-                        - 'SCRIPT_FILENAME $realpath_root$fastcgi_script_name'
-                        - 'DOCUMENT_ROOT $realpath_root'
-                    set:
-                        - '$path_info $fastcgi_path_info'
-                    proxy: ''
-                    proxy_redirect: ''
-    proxies: {  }
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+                        - 'APP_ENV prod'
+                        - 'APP_DEBUG false'
+                general_fastcgi:
+                    www_root: /var/www/website/web
+                    fastcgi: phpfcgi
 letsencrypt:
     install: '0'
 php:
@@ -148,12 +91,6 @@ php:
         session.auto_start: 'off'
 xdebug:
     install: '1'
-nodejs:
-    install: '1'
-    npm_packages:
-        - grunt-cli
-        - grunt
-        - bower
 mariadb:
     settings:
         root_password: 'root'
@@ -163,15 +100,10 @@ mariadb:
             password: 'dev'
     databases:
         mariadbnd_mvf5lpc4ce39:
-            name: symfony
+            name: website
     grants:
         mariadbng_nea0e0z4ghis:
             user: dev
-            table: 'symfony.*'
+            table: 'website.*'
 mailhog:
     install: '1'
-elastic_search:
-    install: '1'
-    instances:
-        esi_pmn23prxanqp:
-            name: elk

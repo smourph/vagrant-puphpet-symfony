@@ -134,25 +134,70 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_1sw61u82herg:
-                    www_root: ''
+                general:
+                    www_root: /var/www/awesome/web
                     location: /
                     index_files:
                         - index.html
-                        - index.htm
+                        - app.php
                         - index.php
                     try_files:
                         - $uri
                         - $uri/
+                        - /app.php$is_args$args
                         - /index.php$is_args$args
                     fastcgi: ''
                     fastcgi_index: ''
                     fastcgi_split_path: ''
+                    set:
+                        - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_uuf6qk5kf88q:
-                    www_root: ''
-                    location: '~ \.php$'
+                dev:
+                    www_root: /var/www/awesome/web
+                    location: '~ ^/(app_dev|config)\.php(/|$)'
+                    index_files:
+                        - app_dev.php
+                    try_files:
+                        - $uri
+                        - $uri/
+                        - /app_dev.php$is_args$args
+                    fastcgi: '127.0.0.1:9000'
+                    fastcgi_index: app_dev.php
+                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+                    fast_cgi_params_extra:
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+                        - 'APP_ENV dev'
+                    set:
+                        - '$path_info $fastcgi_path_info'
+                    proxy: ''
+                    proxy_redirect: ''
+                prod:
+                    www_root: /var/www/awesome/web
+                    location: '~ ^/(app)\.php(/|$)'
+                    index_files:
+                        - app.php
+                        - index.php
+                    try_files:
+                        - $uri
+                        - $uri/
+                        - /app.php$is_args$args
+                        - /index.php$is_args$args
+                    fastcgi: '127.0.0.1:9000'
+                    fastcgi_index: app.php
+                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+                    fast_cgi_params_extra:
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+                        - 'APP_ENV prod'
+                    set:
+                        - '$path_info $fastcgi_path_info'
+                    proxy: ''
+                    proxy_redirect: ''
+                general_fastcgi:
+                    www_root: /var/www/awesome/web
+                    location: '~ \.php(/|$)'
+                    index_files:
+                        - index.php
                     try_files:
                         - $uri
                         - $uri/
@@ -161,8 +206,7 @@ nginx:
                     fastcgi_index: index.php
                     fastcgi_split_path: '^(.+\.php)(/.*)$'
                     fast_cgi_params_extra:
-                        - 'SCRIPT_FILENAME $request_filename'
-                        - 'APP_ENV dev'
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
                     set:
                         - '$path_info $fastcgi_path_info'
                     proxy: ''
@@ -186,10 +230,8 @@ apache:
             servername: awesome.dev
             serveraliases:
                 - www.awesome.dev
-            docroot: /var/www/awesome
+            docroot: /var/www/awesome/web
             port: '80'
-            setenv:
-                - 'APP_ENV dev'
             setenvif:
                 - 'Authorization "(.*)" HTTP_AUTHORIZATION=$1'
             custom_fragment: ''
@@ -202,7 +244,8 @@ apache:
             ssl_cipher: ''
             directories:
                 avd_yrkm4mqe4e6o:
-                    path: /var/www/awesome
+                    path: /var/www/awesome/web
+                    directoryindex: app.dev
                     options:
                         - Indexes
                         - FollowSymlinks
@@ -212,13 +255,22 @@ apache:
                     require:
                         - 'all granted'
                     custom_fragment: ''
-                    files_match:
-                        avdfm_qnuizzr03ghb:
-                            path: \.php$
-                            sethandler: 'proxy:fcgi://127.0.0.1:9000'
-                            custom_fragment: ''
-                            provider: filesmatch
                     provider: directory
+            files_match:
+                avfm_ris2nor23ecz:
+                    path: (app_dev|config)\.php$
+                    sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                    setenv:
+                        - 'APP_ENV dev'
+                    custom_fragment: ''
+                    provider: filesmatch
+                avfm_3fejlk36z7iq:
+                    path: (app)\.php$
+                    sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                    setenv:
+                        - 'APP_ENV prod'
+                    custom_fragment: ''
+                    provider: filesmatch
 letsencrypt:
     install: '1'
     settings:
@@ -426,4 +478,3 @@ solr:
     settings:
         version: 5.5.2
         port: '8984'
-
