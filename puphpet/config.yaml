@@ -153,7 +153,7 @@ nginx:
                         - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
-                dev:
+                symfony_dev:
                     www_root: /var/www/awesome/web
                     location: '~ ^/(app_dev|config)\.php(/|$)'
                     index_files:
@@ -172,7 +172,7 @@ nginx:
                         - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
-                prod:
+                symfony_prod:
                     www_root: /var/www/awesome/web
                     location: '~ ^/(app)\.php(/|$)'
                     index_files:

@@ -4,7 +4,7 @@ vagrantfile:
             local:
                 machines:
                     vflm_olp0m5ysywcp:
-                        id: website-front
+                        id: website-front1
                         hostname: website.puppet
                         network:
                             private_network: 192.168.X.X
@@ -21,8 +21,6 @@ vagrantfile:
                 rsync:
                     exclude:
                         - .idea/
-                        - .vagrant/
-                        - .git/
 server:
     packages:
         - htop
@@ -48,14 +46,14 @@ nginx:
             locations:
                 general:
                     www_root: /var/www/website/web
-                dev:
+                symfony_dev:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
                     fast_cgi_params_extra:
                         - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
                         - 'APP_ENV dev'
                         - 'APP_DEBUG true'
-                prod:
+                symfony_prod:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
                     fast_cgi_params_extra:
