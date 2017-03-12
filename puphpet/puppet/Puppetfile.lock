@@ -15,7 +15,7 @@ FORGE
 GIT
   remote: https://github.com/arioch/puppet-redis.git
   ref: 1.2.3
-  sha: 6abc4f4ffbe718ed964a9672b3e75f3a88fc916d
+  sha: 05c9d2d8893682f7355f82faa2faf8d08783fab5
   specs:
     arioch-redis (1.2.3)
       puppetlabs-apt (< 3.0.0, >= 2.0.1)
@@ -123,8 +123,8 @@ GIT
 
 GIT
   remote: https://github.com/puphpet/puppet-puphpet.git
-  ref: 57c05c2e077dec062f6b3774c37743fe9cf27d51
-  sha: 57c05c2e077dec062f6b3774c37743fe9cf27d51
+  ref: 5ab8d4bbf10bb788158cfb346f4ccf07b58b7344
+  sha: 5ab8d4bbf10bb788158cfb346f4ccf07b58b7344
   specs:
     puphpet-puphpet (0.0.1)
 
@@ -203,8 +203,8 @@ GIT
 
 GIT
   remote: https://github.com/puppetlabs/puppetlabs-mysql.git
-  ref: 81c4fed35e65e285e334b30998b4e3eba662534c
-  sha: 81c4fed35e65e285e334b30998b4e3eba662534c
+  ref: 3.10.0
+  sha: 11afc2b7965d491abcc8e8aad31d70fbc82e0b3d
   specs:
     puppetlabs-mysql (3.9.0)
       puppet-staging (< 3.0.0, >= 1.0.1)

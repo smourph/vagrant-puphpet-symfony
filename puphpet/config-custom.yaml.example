@@ -25,12 +25,12 @@ server:
     packages:
         - htop
         - vim
+        - zip
+        - unzip
 locale:
     settings:
         timezone: Europe/Paris
 nginx:
-    settings:
-        default_vhost: 0
     upstreams:
         nxv_ci3s83oyzwpe:
             name: phpfcgi
@@ -46,21 +46,14 @@ nginx:
             locations:
                 general:
                     www_root: /var/www/website/web
+                    fastcgi: phpfcgi
                 symfony_dev:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
-                    fast_cgi_params_extra:
-                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
-                        - 'APP_ENV dev'
-                        - 'APP_DEBUG true'
                 symfony_prod:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
-                    fast_cgi_params_extra:
-                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
-                        - 'APP_ENV prod'
-                        - 'APP_DEBUG false'
-                general_fastcgi:
+                index:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
 letsencrypt:

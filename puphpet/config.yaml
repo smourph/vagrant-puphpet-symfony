@@ -138,17 +138,17 @@ nginx:
                     www_root: /var/www/awesome/web
                     location: /
                     index_files:
-                        - index.html
-                        - app.php
                         - index.php
                     try_files:
                         - $uri
                         - $uri/
-                        - /app.php$is_args$args
                         - /index.php$is_args$args
-                    fastcgi: ''
-                    fastcgi_index: ''
-                    fastcgi_split_path: ''
+                        - /app.php$is_args$args
+                    fastcgi: '127.0.0.1:9000'
+                    fastcgi_index: index.php
+                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+                    fast_cgi_params_extra:
+                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
                     set:
                         - '$path_info $fastcgi_path_info'
                     proxy: ''
@@ -174,15 +174,13 @@ nginx:
                     proxy_redirect: ''
                 symfony_prod:
                     www_root: /var/www/awesome/web
-                    location: '~ ^/(app)\.php(/|$)'
+                    location: '~ ^/app\.php(/|$)'
                     index_files:
                         - app.php
-                        - index.php
                     try_files:
                         - $uri
                         - $uri/
                         - /app.php$is_args$args
-                        - /index.php$is_args$args
                     fastcgi: '127.0.0.1:9000'
                     fastcgi_index: app.php
                     fastcgi_split_path: '^(.+\.php)(/.*)$'
@@ -193,9 +191,9 @@ nginx:
                         - '$path_info $fastcgi_path_info'
                     proxy: ''
                     proxy_redirect: ''
-                general_fastcgi:
+                index:
                     www_root: /var/www/awesome/web
-                    location: '~ \.php(/|$)'
+                    location: '~ ^/index\.php(/|$)'
                     index_files:
                         - index.php
                     try_files:
@@ -245,7 +243,7 @@ apache:
             directories:
                 avd_yrkm4mqe4e6o:
                     path: /var/www/awesome/web
-                    directoryindex: app.dev
+                    directoryindex: 'index.php app.dev'
                     options:
                         - Indexes
                         - FollowSymlinks
@@ -265,10 +263,15 @@ apache:
                     custom_fragment: ''
                     provider: filesmatch
                 avfm_3fejlk36z7iq:
-                    path: (app)\.php$
+                    path: app\.php$
                     sethandler: 'proxy:fcgi://127.0.0.1:9000'
                     setenv:
                         - 'APP_ENV prod'
+                    custom_fragment: ''
+                    provider: filesmatch
+                avfm_w7nhok03z6j4:
+                    path: \.php$
+                    sethandler: 'proxy:fcgi://127.0.0.1:9000'
                     custom_fragment: ''
                     provider: filesmatch
 letsencrypt:
@@ -375,7 +378,6 @@ mariadb:
         version: '10.1'
         root_password: '123'
         override_options: {  }
-    adminer: 0
     users:
         mariadbnu_42qk053ero9u:
             name: dbuser
@@ -396,7 +398,6 @@ mysql:
         version: '5.7'
         root_password: '123'
         override_options: {  }
-    adminer: 0
     users:
         mysqlnu_nyr1nzbkepfh:
             name: dbuser
@@ -422,7 +423,6 @@ postgresql:
     databases: {  }
     users: {  }
     grants: {  }
-    adminer: 0
 mongodb:
     install: '0'
     settings:
@@ -437,7 +437,6 @@ redis:
         port: '6379'
 sqlite:
     install: '0'
-    adminer: 0
     databases: {  }
 mailhog:
     install: '0'
@@ -478,3 +477,4 @@ solr:
     settings:
         version: 5.5.2
         port: '8984'
+
