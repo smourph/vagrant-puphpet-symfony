@@ -23,8 +23,8 @@ vagrantfile:
                         - .idea/
 server:
     packages:
-        - htop
         - vim
+        - htop
         - zip
         - unzip
 locale:
@@ -46,14 +46,13 @@ nginx:
             locations:
                 general:
                     www_root: /var/www/website/web
-                    fastcgi: phpfcgi
                 symfony_dev:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
-                symfony_prod:
+                index:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
-                index:
+                symfony_prod:
                     www_root: /var/www/website/web
                     fastcgi: phpfcgi
 letsencrypt:
@@ -84,17 +83,20 @@ xdebug:
     install: '1'
 mariadb:
     settings:
-        root_password: 'root'
+        root_password: '123'
     users:
         mariadbnu_42qk053ero9u:
-            name: dev
-            password: 'dev'
+            name: dbuser
+            password: '123'
     databases:
         mariadbnd_mvf5lpc4ce39:
-            name: website
+            name: dbname
+            sql: ''
     grants:
         mariadbng_nea0e0z4ghis:
-            user: dev
-            table: 'website.*'
+            user: dbuser
+            table: 'dbname.*'
+            privileges:
+                - ALL
 mailhog:
     install: '1'
