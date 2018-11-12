@@ -3,18 +3,18 @@ vagrantfile:
         provider:
             local:
                 machines:
-                    vflm_olp0m5ysywcp:
+                    machine1:
                         id: website-front1
                         hostname: website.puppet
                         network:
                             private_network: 192.168.X.X
                             forwarded_port:
-                                vflmnfp_zi0z5phrrq1i:
+                                port1:
                                     host: 'XXXX'
-                        memory: '1024'
+                        memory: '2048'
                         cpus: '2'
         synced_folder:
-            vflsf_eaxlft0h0gn6:
+            folder1:
                 source: ../website
                 target: /var/www/website
                 sync_type: nfs
@@ -23,8 +23,9 @@ vagrantfile:
                         - .idea/
 server:
     packages:
-        - vim
+        - bash-completion
         - htop
+        - vim
         - zip
         - unzip
 locale:
@@ -32,29 +33,47 @@ locale:
         timezone: Europe/Paris
 nginx:
     upstreams:
-        nxv_ci3s83oyzwpe:
-            name: phpfcgi
+        phpfastcgi:
+            name: phpfastcgi
             upstream_fail_timeout: 10s
             members:
                 - '127.0.0.1:9000'
     vhosts:
-        website:
+        vhost1:
             server_name: website.local
             server_aliases:
                 - www.website.local
             www_root: /var/www/website
             locations:
-                general:
+                php_html:
+                    www_root: /var/www/website
+                php_php:
+                    www_root: /var/www/website
+                    fastcgi: phpfastcgi
+                sf2_3_base:
                     www_root: /var/www/website/web
-                symfony_dev:
+                sf2_3_dev:
                     www_root: /var/www/website/web
-                    fastcgi: phpfcgi
-                index:
+                    fastcgi: phpfastcgi
+                sf2_3_prod:
                     www_root: /var/www/website/web
-                    fastcgi: phpfcgi
-                symfony_prod:
-                    www_root: /var/www/website/web
-                    fastcgi: phpfcgi
+                    fastcgi: phpfastcgi
+                sf4_base:
+                    www_root: /var/www/website/public
+                sf4_index:
+                    www_root: /var/www/website/public
+                    fastcgi: phpfastcgi
+                wp_favicon:
+                    www_root: /var/www/website
+                wp_robots:
+                    www_root: /var/www/website
+                wp_base:
+                    www_root: /var/www/website
+                wp_php:
+                    www_root: /var/www/website
+                    fastcgi: phpfastcgi
+                wp_media:
+                    www_root: /var/www/website
 letsencrypt:
     install: '0'
 php:
@@ -85,15 +104,15 @@ mariadb:
     settings:
         root_password: '123'
     users:
-        mariadbnu_42qk053ero9u:
+        user1:
             name: dbuser
             password: '123'
     databases:
-        mariadbnd_mvf5lpc4ce39:
+        database1:
             name: dbname
             sql: ''
     grants:
-        mariadbng_nea0e0z4ghis:
+        grant1:
             user: dbuser
             table: 'dbname.*'
             privileges:
