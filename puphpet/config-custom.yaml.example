@@ -45,35 +45,164 @@ nginx:
                 - www.website.local
             www_root: /var/www/website
             locations:
-                php_html:
-                    www_root: /var/www/website
-                php_php:
-                    www_root: /var/www/website
-                    fastcgi: phpfastcgi
-                sf2_3_base:
-                    www_root: /var/www/website/web
-                sf2_3_dev:
-                    www_root: /var/www/website/web
-                    fastcgi: phpfastcgi
-                sf2_3_prod:
-                    www_root: /var/www/website/web
-                    fastcgi: phpfastcgi
-                sf4_base:
-                    www_root: /var/www/website/public
-                sf4_index:
-                    www_root: /var/www/website/public
-                    fastcgi: phpfastcgi
-                wp_favicon:
-                    www_root: /var/www/website
-                wp_robots:
-                    www_root: /var/www/website
-                wp_base:
-                    www_root: /var/www/website
-                wp_php:
-                    www_root: /var/www/website
-                    fastcgi: phpfastcgi
-                wp_media:
-                    www_root: /var/www/website
+#                php_html:
+#                    www_root: /var/www/website
+#                    location: /
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    index_files:
+#                        - index.html
+#                        - index.php
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /index.php$is_args$args
+#                php_php:
+#                    www_root: /var/www/website
+#                    location: '~ \.php$'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    index_files:
+#                        - index.php
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                    set:
+#                        - '$path_info $fastcgi_path_info'
+#                    fastcgi: phpfastcgi
+#                    fastcgi_index: index.php
+#                    fastcgi_split_path: '^(.+?\.php)(/.*)$'
+#                    fast_cgi_params_extra:
+#                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+#                sf2_3_base:
+#                    www_root: /var/www/website/web
+#                    location: /
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    index_files:
+#                        - app.php
+#                        - $uri
+#                        - $uri/
+#                        - /app.php$is_args$args
+#                    try_files:
+#                sf2_3_dev:
+#                    www_root: /var/www/website/web
+#                    location: '~ ^/(app_dev|config)\.php(/|$)'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /app_dev.php$is_args$args
+#                    set:
+#                        - '$path_info $fastcgi_path_info'
+#                    fastcgi: phpfastcgi
+#                    fastcgi_index: app_dev.php
+#                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+#                    fast_cgi_params_extra:
+#                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+#                        - 'DOCUMENT_ROOT $realpath_root'
+#                        - 'APP_ENV dev'
+#                sf2_3_prod:
+#                    www_root: /var/www/website/web
+#                    location: '~ ^/app\.php(/|$)'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /app.php$is_args$args
+#                    set:
+#                        - '$path_info $fastcgi_path_info'
+#                    fastcgi: phpfastcgi
+#                    fastcgi_index: app.php
+#                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+#                    fast_cgi_params_extra:
+#                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+#                        - 'DOCUMENT_ROOT $realpath_root'
+#                        - 'APP_ENV prod'
+#                sf4_base:
+#                    www_root: /var/www/website/public
+#                    location: /
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    index_files:
+#                        - index.php
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /index.php$is_args$args
+#                sf4_index:
+#                    www_root: /var/www/website/public
+#                    location: '~ ^/index\.php(/|$)'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /index.php$is_args$args
+#                    set:
+#                        - '$path_info $fastcgi_path_info'
+#                    fastcgi: phpfastcgi
+#                    fastcgi_index: index.php
+#                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+#                    fast_cgi_params_extra:
+#                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+#                        - 'DOCUMENT_ROOT $realpath_root'
+#                        - 'APP_ENV dev'
+#                wp_favicon:
+#                    www_root: ''
+#                    location: /favicon.ico
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    location_cfg_append:
+#                        - 'log_not_found off'
+#                        - 'access_log off'
+#                wp_robots:
+#                    www_root: ''
+#                    location: /robots.txt
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    location_cfg_append:
+#                        - 'allow all'
+#                        - 'log_not_found off'
+#                        - 'access_log off'
+#                wp_base:
+#                    www_root: /var/www/website
+#                    location: /
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    index_files:
+#                        - index.php
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /index.php$is_args$args
+#                wp_php:
+#                    www_root: /var/www/website
+#                    location: '~ \.php$'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    try_files:
+#                        - $uri
+#                        - $uri/
+#                        - /index.php$is_args$args
+#                    set:
+#                        - '$path_info $fastcgi_path_info'
+#                    fastcgi: phpfastcgi
+#                    fastcgi_index: index.php
+#                    fastcgi_split_path: '^(.+\.php)(/.*)$'
+#                    fast_cgi_params_extra:
+#                        - 'SCRIPT_FILENAME $document_root$fastcgi_script_name'
+#                        - 'DOCUMENT_ROOT $realpath_root'
+#                wp_media:
+#                    www_root: ''
+#                    location: '~* \.(js|css|png|jpg|jpeg|gif|ico)$'
+#                    autoindex: 'off'
+#                    internal: 'false'
+#                    location_cfg_append:
+#                        - 'expires max'
+#                        - 'log_not_found off'
 letsencrypt:
     install: '0'
 php:
