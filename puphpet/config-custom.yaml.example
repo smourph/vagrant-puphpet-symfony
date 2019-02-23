@@ -2,6 +2,8 @@ vagrantfile:
     vm:
         provider:
             local:
+#                chosen_virtualizer: virtualbox
+#                chosen_virtualizer: vmware_fusion
                 machines:
                     machine1:
                         id: website-front1
