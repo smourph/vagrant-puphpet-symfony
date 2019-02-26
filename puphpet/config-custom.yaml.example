@@ -231,6 +231,7 @@ php:
         register_global: 'off'
         register_globals: 'off'
         session.auto_start: 'off'
+        memory_limit: 512M
 xdebug:
     install: '1'
 mariadb:
